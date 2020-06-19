@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to Dev-Wallet Backend')
 })
 
-app.get('/getIntern', (req, res) => {
+app.get('/interns', (req, res) => {
   Intern.find({}, (err, interns) => {
     if(err) {
       throw err
