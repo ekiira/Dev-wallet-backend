@@ -5,12 +5,12 @@ const bodyParser = require('body-parser')
 const app = express()
 const Intern = require('./models/intern');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const axios = require('axios')
 
 dotenv.config()
 const name = process.env.MONGODB_NAME 
 const pw = process.env.MONGODB_PASSWORD
-// const uri = 'mongodb://tosin:0luwatosin@ds135444.mlab.com:35444/airtime-db'
 const uri = `mongodb://${name}:${pw}@ds135444.mlab.com:35444/airtime-db`
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -24,6 +24,31 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.send('Welcome to Dev-Wallet Backend')
 })
+
+app.post('/wallet-api', (req, res) => {
+  const data = {
+    Code: req.body.Code,
+    Amount: req.body.Amount,
+    PhoneNumber: req.body.PhoneNumber,
+    SecretKey: req.body.SecretKey,
+  };
+  const bearer = req.body.bearer
+  axios.post('https://sandbox.wallets.africa/bills/airtime/purchase', data, {
+    headers: {
+      Authorization: bearer,
+      'Content-Type': 'application/json',
+    },
+  }) 
+  .then((response) => {
+    const { data } = response;
+    // res.send
+    return res.status(201).send({message: data.Message}) 
+  })
+  .catch((err) => {
+    console.log(err.message, 'error')
+  });
+})
+
 
 app.get('/interns', (req, res) => {
   Intern.find({}, (err, interns) => {
