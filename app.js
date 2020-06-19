@@ -5,10 +5,15 @@ const bodyParser = require('body-parser')
 const app = express()
 const Intern = require('./models/intern');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv')
 
-const uri = 'mongodb://tosin:0luwatosin@ds135444.mlab.com:35444/airtime-db'
+dotenv.config()
+const name = process.env.MONGODB_NAME 
+const pw = process.env.MONGODB_PASSWORD
+// const uri = 'mongodb://tosin:0luwatosin@ds135444.mlab.com:35444/airtime-db'
+const uri = `mongodb://${name}:${pw}@ds135444.mlab.com:35444/airtime-db`
 
-mongoose.connect(uri, { useNewUrlParser: true }).then(() => {
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
   console.log('connected to database successfully');
 })
 
@@ -26,7 +31,6 @@ app.get('/getIntern', (req, res) => {
       console.log(err)
     } else {
       res.json(interns)
-      console.log(interns, 'all')
     }
   })
 })
@@ -36,7 +40,8 @@ app.post('/addIntern', (req, res) => {
     name: req.body.name,
     number: req.body.number,
     provider: req.body.provider,
-    amount: req.body.amount
+    amount: req.body.amount,
+    track: req.body.track
   }
   Intern.create(allData, (err, addInterns) => {
     if(err) {
@@ -47,7 +52,27 @@ app.post('/addIntern', (req, res) => {
   })
 })
 
-const port = process.env.PORT || 4000;
+app.delete('/removeInterns/:id', (req, res) => {
+  Intern.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send('Deleted');
+    }
+  });
+});
+
+app.delete('/removeAllInterns', (req, res) => {
+  Intern.remove(req.params.id, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send('Deleted');
+    }
+  });
+});
+
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log('server has started')
 })
