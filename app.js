@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 app.get('/getIntern', (req, res) => {
   Intern.find({}, (err, interns) => {
     if(err) {
-      console.log(err)
+      throw err
     } else {
       res.json(interns)
     }
@@ -45,9 +45,9 @@ app.post('/addIntern', (req, res) => {
   }
   Intern.create(allData, (err, addInterns) => {
     if(err) {
-      console.log(err)
+      throw err
     } else {
-      console.log('sved',addInterns)
+      res.json(addInterns)
     }
   })
 })
@@ -55,7 +55,7 @@ app.post('/addIntern', (req, res) => {
 app.delete('/removeInterns/:id', (req, res) => {
   Intern.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
-      console.log(err);
+      throw err;
     } else {
       res.send('Deleted');
     }
@@ -65,7 +65,7 @@ app.delete('/removeInterns/:id', (req, res) => {
 app.delete('/removeAllInterns', (req, res) => {
   Intern.remove(req.params.id, (err) => {
     if (err) {
-      console.log(err);
+      throw err
     } else {
       res.send('Deleted');
     }
@@ -74,5 +74,5 @@ app.delete('/removeAllInterns', (req, res) => {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log('server has started')
+  process.stdout.write(`server has started at port ${port}`)
 })
