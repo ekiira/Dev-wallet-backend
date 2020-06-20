@@ -11,6 +11,10 @@ const axios = require('axios')
 dotenv.config()
 const name = process.env.MONGODB_NAME 
 const pw = process.env.MONGODB_PASSWORD
+const public = process.env.API_PUBLIC_KEY
+const secret = process.env.API_SECRET_KEY
+
+// DATABASE CONNECTION
 const uri = `mongodb://${name}:${pw}@ds135444.mlab.com:35444/airtime-db`
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }).then(() => {
@@ -30,9 +34,9 @@ app.post('/wallet-api/', (req, res) => {
     Code: req.body.Code,
     Amount: req.body.Amount,
     PhoneNumber: req.body.PhoneNumber,
-    SecretKey: req.body.SecretKey,
+    SecretKey: secret,
   };
-  const bearer = req.body.bearer
+  const bearer = `Bearer ${public}`
   axios.post('https://sandbox.wallets.africa/bills/airtime/purchase', data, {
     headers: {
       Authorization: bearer,
