@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to Dev-Wallet Backend')
 })
 
-app.post('/wallet-api', (req, res) => {
+app.post('/wallet-api/', (req, res) => {
   const data = {
     Code: req.body.Code,
     Amount: req.body.Amount,
