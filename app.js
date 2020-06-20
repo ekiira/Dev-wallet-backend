@@ -45,8 +45,8 @@ app.post('/wallet-api/', (req, res) => {
     return res.status(201).send({message: data.Message}) 
   })
   .catch((err) => {
-    const { data } = err
-    return res.status(400).send({message: data.Message})
+    const { response } = err
+    return res.status(response.status).send({message: response.statusText})
   });
 })
 
