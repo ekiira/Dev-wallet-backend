@@ -13,7 +13,7 @@ const name = process.env.MONGODB_NAME
 const pw = process.env.MONGODB_PASSWORD
 const uri = `mongodb://${name}:${pw}@ds135444.mlab.com:35444/airtime-db`
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }).then(() => {
   console.log('connected to database successfully');
 })
 
@@ -45,10 +45,10 @@ app.post('/wallet-api/', (req, res) => {
     return res.status(201).send({message: data.Message}) 
   })
   .catch((err) => {
-    console.log(err.message, 'error')
+    const { data } = err
+    return res.status(400).send({message: data.Message})
   });
 })
-
 
 app.get('/interns', (req, res) => {
   Intern.find({}, (err, interns) => {
@@ -73,6 +73,19 @@ app.post('/addIntern', (req, res) => {
       throw err
     } else {
       res.json(addInterns)
+    }
+  })
+})
+
+app.post('/edit/intern/:id', (req, res) => {
+  const allData = {
+    amount: req.body.amount,
+  }
+  Intern.findByIdAndUpdate(req.params.id, allData, (err, editedIntern) => {
+    if(err) {
+      throw err
+    } else {
+      res.json(editedIntern)
     }
   })
 })
